@@ -13,7 +13,7 @@ transform = T.Compose([
         T.Normalize(mean=[0.485, 0.456, 0.406],
                     std=[0.229, 0.224, 0.225])])
 
-ort_session = onnxruntime.InferenceSession("./models/eff_modelv2-epoch-9.onnx")
+ort_session = onnxruntime.InferenceSession("./models/eff_modelv2-epoch-9.onnx", providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
 
 
 def to_numpy(tensor):
@@ -34,7 +34,7 @@ def predict_and_plot_path(img):
 
     pred_path_norm = ort_outputs[0].reshape(100,3)
 
-    print("Time: {:.2f}s".format((time.time()-since)))
+    print("Time: {:.2f}ms".format((time.time()-since) * 1000))
     pred_path = target_denormalize_mean_std_np(pred_path_norm)
 
     plot_img = draw_path_from_device_path(pred_path, img_copy, fill_color=(128,0,255), line_color=(255, 255, 255))
